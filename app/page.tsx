@@ -39,7 +39,6 @@ export default function Home() {
     return Math.floor(Math.random() * 3);
   }
 
-
   function drawPlayerLine(
     draw: MutableRefObject<Container | null>,
     xStart: number,
@@ -59,50 +58,58 @@ export default function Home() {
     // Calculate sizes and positions
     const textSize = horizontalLength / 12;
     const imageSize = textSize * 1.2; // Make image slightly larger than text
-    
+
     // Calculate total width of image and text
-    const textWidth = draw.current.text(username).font({ size: textSize }).length();
+    const textWidth = draw.current
+      .text(username)
+      .font({ size: textSize })
+      .length();
     const totalWidth = imageSize + 5 + textWidth; // 5px spacing between image and text
-    
+
     // Calculate starting X position to center the image and text
     const startX = xStart + (horizontalLength - totalWidth) / 2;
-    
+
     const imageX = startX;
     const imageY = yStart - 1.1 * imageSize; // Center vertically on the line
     const textX = imageX + imageSize + 5; // 5px spacing after the image
-    const textY = yStart - 1.1 * textSize; // Center text vertically on the line
+    const textY = yStart - 1.5 * textSize; // Center text vertically on the line
 
     // Add the profile image
-    const image = draw.current.image(profileImage)
+    const image = draw.current
+      .image(profileImage)
       .size(imageSize, imageSize)
       .move(imageX, imageY);
-    
+
     // Create a circular clip path
     const clipPath = draw.current.circle(imageSize).move(imageX, imageY);
     image.clipWith(clipPath);
 
     // Add the text next to the image
-    draw.current.text(username)
+    draw.current
+      .text(username)
       .move(textX, textY)
-      .font({ size: textSize, anchor: 'start', fill: "#e59eff" })
-      // .center(textX + textWidth / 2, yStart); // Center text vertically
+      .font({ size: textSize, anchor: "start", fill: "#e59eff" });
+    // .center(textX + textWidth / 2, yStart); // Center text vertically
 
+    // Add Pepe image to the right of the horizontal line
+    const moveImageSize = imageSize * 1; // Adjust size as needed
+    const moveImageX = leftSide
+      ? xStart + horizontalLength - 1.1 * moveImageSize
+      : xStart + 0.1 * moveImageSize; // 5px padding after the line
+    const moveImageY = yStart - 1.1 * moveImageSize; // Center vertically on the line
 
-        // Add Pepe image to the right of the horizontal line
-        const moveImageSize = imageSize * 1 // Adjust size as needed
-        const moveImageX = leftSide ? xStart + horizontalLength - 1.1 * moveImageSize : xStart + 0.1 * moveImageSize; // 5px padding after the line
-        const moveImageY = yStart - 1.1 *moveImageSize; // Center vertically on the line
-    
-        move = getRandomMove();
-    
-        let moveImageUrl;
-        if (move === 0) moveImageUrl = "/rock.svg";
-        else if (move === 1) moveImageUrl = "/pepe.svg";
-        else if (move === 2) moveImageUrl = "/slizards.svg";
-    
-        moveImageUrl && draw.current.image(moveImageUrl)
-          .size(moveImageSize, moveImageSize)
-          .move(moveImageX, moveImageY);
+    move = getRandomMove();
+
+    let moveImageUrl;
+    if (move === 0) moveImageUrl = "/rock.svg";
+    else if (move === 1) moveImageUrl = "/pepe.svg";
+    else if (move === 2) moveImageUrl = "/slizards.svg";
+
+    moveImageUrl &&
+      draw.current
+        .image(moveImageUrl)
+        .size(moveImageSize, moveImageSize)
+        .move(moveImageX, moveImageY);
   }
 
   function drawVerticalLine(
@@ -117,7 +124,6 @@ export default function Home() {
       .line(xStart, yStart, xStart, yStart + verticalLength)
       .stroke({ width: 2, color: "#e59eff" });
   }
-
 
   // useEffect(() => {
   //   const fetchRounds = async () => {
@@ -178,6 +184,17 @@ export default function Home() {
       if (drawRef.current && rounds) {
         drawRef.current.rect("100%", "100%").fill("#2f0040"); // Updated background color
 
+        const heroWidth = 800; // Adjust this value as needed
+        const heroHeight = 200; // Adjust this value as needed
+        const heroX = (svgWidth - heroWidth) / 2;
+        const heroY = 10; // Adjust this value to set the distance from the top
+
+        drawRef.current
+          .image("/rpsHero.svg")
+          .size(heroWidth, heroHeight)
+          .move(heroX, heroY)
+          .forward();
+
         const numberOfLines = rounds * 2;
         const matchWidth = svgWidth / (numberOfLines + 2);
         let yStart = 50; // Use this to set y margin
@@ -199,11 +216,29 @@ export default function Home() {
 
             // draw top line of match
             const player1 = getRandomPlayer();
-            drawPlayerLine(drawRef, xLeftLeft, y, matchWidth, player1.username, player1.image, 0, true);
+            drawPlayerLine(
+              drawRef,
+              xLeftLeft,
+              y,
+              matchWidth,
+              player1.username,
+              player1.image,
+              0,
+              true
+            );
 
             // draw bottom line of match
             const player2 = getRandomPlayer();
-            drawPlayerLine(drawRef, xLeftLeft, y + matchHeight, matchWidth, player2.username, player2.image, 0, true);
+            drawPlayerLine(
+              drawRef,
+              xLeftLeft,
+              y + matchHeight,
+              matchWidth,
+              player2.username,
+              player2.image,
+              0,
+              true
+            );
 
             // draw connecting line of match
             drawVerticalLine(drawRef, xLeftRight, y, matchHeight);
@@ -217,11 +252,29 @@ export default function Home() {
 
             // draw top line of match
             const player1 = getRandomPlayer();
-            drawPlayerLine(drawRef, xRightLeft, y, matchWidth, player1.username, player1.image, 0, false);
+            drawPlayerLine(
+              drawRef,
+              xRightLeft,
+              y,
+              matchWidth,
+              player1.username,
+              player1.image,
+              0,
+              false
+            );
 
             // draw bottom line of match
             const player2 = getRandomPlayer();
-            drawPlayerLine(drawRef, xRightLeft, y + matchHeight, matchWidth, player2.username, player2.image, 0, false);
+            drawPlayerLine(
+              drawRef,
+              xRightLeft,
+              y + matchHeight,
+              matchWidth,
+              player2.username,
+              player2.image,
+              0,
+              false
+            );
 
             // draw connecting line of match
             drawVerticalLine(drawRef, xRightLeft, y, matchHeight);
@@ -232,11 +285,29 @@ export default function Home() {
 
         // Draw left side of final match
         const player1 = getRandomPlayer();
-        drawPlayerLine(drawRef, (rounds - 1) * matchWidth, svgHeight/2, matchWidth, player1.username, player1.image, 0, true);
+        drawPlayerLine(
+          drawRef,
+          (rounds - 1) * matchWidth,
+          svgHeight / 2,
+          matchWidth,
+          player1.username,
+          player1.image,
+          0,
+          true
+        );
 
         // Draw right side of final match
         const player2 = getRandomPlayer();
-        drawPlayerLine(drawRef, (rounds + 2) * matchWidth, svgHeight/2, matchWidth, player2.username, player2.image, 0, false);
+        drawPlayerLine(
+          drawRef,
+          (rounds + 2) * matchWidth,
+          svgHeight / 2,
+          matchWidth,
+          player2.username,
+          player2.image,
+          0,
+          false
+        );
 
         // Draw winner box
         const winnerBoxHeight = svgHeight / 6;
@@ -256,7 +327,7 @@ export default function Home() {
       {!matches ? (
         <p>Loading matches...</p>
       ) : matches.length > 0 ? ( */}
-        <div ref={svgRef}></div>  {/* SVG container for the bracket */}
+      <div ref={svgRef}></div> {/* SVG container for the bracket */}
       {/* ) : (
         <p>No matches found</p>
       )} */}
