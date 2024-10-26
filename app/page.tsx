@@ -15,7 +15,7 @@ export default function Home() {
   const svgHeight = 900;
 
   useEffect(() => {
-    setRounds(5);
+    setRounds(3);
   }, []);
 
   // function generateRandomString(n: number): string {
@@ -52,8 +52,6 @@ export default function Home() {
   ) {
     if (!draw.current) return;
 
-    console.log(profileImage, move);
-
     draw.current
       .line(xStart, yStart, xStart + horizontalLength, yStart)
       .stroke({ width: 2, color: "#e59eff" });
@@ -61,29 +59,21 @@ export default function Home() {
     // Calculate sizes and positions
     const textSize = horizontalLength / 12;
     const imageSize = textSize * 1.2; // Make image slightly larger than text
-    const imageX = xStart + 5; // 5px padding from the start of the line
-    const imageY = yStart - 1 * imageSize; // Center vertically on the line
-    const textX = imageX + imageSize + 5; // 5px padding after the image
-    const textY = yStart - 1 * imageSize; // Slightly above the line
-
-    // Add Pepe image to the right of the horizontal line
-    const moveImageSize = imageSize * 1 // Adjust size as needed
-    const moveImageX = leftSide ? xStart + horizontalLength + 5 : xStart - moveImageSize- 5; // 5px padding after the line
-    const moveImageY = yStart - moveImageSize / 2; // Center vertically on the line
-
-    move = getRandomMove();
-
-    let moveImageUrl;
-    if (move === 0) moveImageUrl = "/rock.svg";
-    else if (move === 1) moveImageUrl = "/pepe.svg";
-    else if (move === 2) moveImageUrl = "/slizards.svg";
-
-    moveImageUrl && draw.current.image(moveImageUrl)
-      .size(moveImageSize, moveImageSize)
-      .move(moveImageX, moveImageY);
+    
+    // Calculate total width of image and text
+    const textWidth = draw.current.text(username).font({ size: textSize }).length();
+    const totalWidth = imageSize + 5 + textWidth; // 5px spacing between image and text
+    
+    // Calculate starting X position to center the image and text
+    const startX = xStart + (horizontalLength - totalWidth) / 2;
+    
+    const imageX = startX;
+    const imageY = yStart - 1.1 * imageSize; // Center vertically on the line
+    const textX = imageX + imageSize + 5; // 5px spacing after the image
+    const textY = yStart - 1.1 * textSize; // Center text vertically on the line
 
     // Add the profile image
-    const image =draw.current.image(profileImage)
+    const image = draw.current.image(profileImage)
       .size(imageSize, imageSize)
       .move(imageX, imageY);
     
@@ -94,7 +84,25 @@ export default function Home() {
     // Add the text next to the image
     draw.current.text(username)
       .move(textX, textY)
-      .font({ size: textSize, anchor: 'start', fill: "#e59eff" });
+      .font({ size: textSize, anchor: 'start', fill: "#e59eff" })
+      // .center(textX + textWidth / 2, yStart); // Center text vertically
+
+
+        // Add Pepe image to the right of the horizontal line
+        const moveImageSize = imageSize * 1 // Adjust size as needed
+        const moveImageX = leftSide ? xStart + horizontalLength - 1.1 * moveImageSize : xStart + 0.1 * moveImageSize; // 5px padding after the line
+        const moveImageY = yStart - 1.1 *moveImageSize; // Center vertically on the line
+    
+        move = getRandomMove();
+    
+        let moveImageUrl;
+        if (move === 0) moveImageUrl = "/rock.svg";
+        else if (move === 1) moveImageUrl = "/pepe.svg";
+        else if (move === 2) moveImageUrl = "/slizards.svg";
+    
+        moveImageUrl && draw.current.image(moveImageUrl)
+          .size(moveImageSize, moveImageSize)
+          .move(moveImageX, moveImageY);
   }
 
   function drawVerticalLine(
